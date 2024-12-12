@@ -9,8 +9,7 @@ RUN go mod download
 FROM foundation AS builder
 
 COPY . .
-ARG GOARCH=amd64
-RUN make GOARCH=$GOARCH
+RUN make
 
 FROM gcr.io/distroless/base AS runtime
 

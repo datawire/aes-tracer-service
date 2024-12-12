@@ -1,14 +1,12 @@
 SHELL := /usr/bin/env bash
 
-GIT_COMMIT=$(shell git rev-parse --verify HEAD)
-
 GOOS = $(shell go env GOOS)
 GOARCH = $(shell go env GOARCH)
 GOBUILD = go build -o bin/$(BINARY_BASENAME)-$(GOOS)-$(GOARCH)
 
 BINARY_BASENAME=tracer
 
-DOCKER_REPO ?= datawire.io/tracer
+DOCKER_REPO ?= datawire/tracer
 TAG ?= latest
 
 .PHONY: all build build.image image.push clean fmt run test.fast
