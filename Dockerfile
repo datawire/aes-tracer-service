@@ -9,6 +9,7 @@ RUN go mod download
 FROM foundation AS builder
 
 COPY . .
+# Build only for linux/amd64 since this is for the container
 RUN make
 
 FROM gcr.io/distroless/base AS runtime

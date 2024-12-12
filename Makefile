@@ -2,7 +2,7 @@ SHELL := /usr/bin/env bash
 
 GOOS = $(shell go env GOOS)
 GOARCH = $(shell go env GOARCH)
-GOBUILD = go build -o bin/$(BINARY_BASENAME)-$(GOOS)-$(GOARCH)
+GOBUILD = go build -o bin/$(BINARY_BASENAME)-$(GOOS)-$(GOARCH) .
 
 BINARY_BASENAME=tracer
 
@@ -14,21 +14,16 @@ TAG ?= latest
 all: clean fmt test.fast build
 
 build: fmt
-	$(GOBUILD) ./...
+	$(GOBUILD)
 	ln -sf $(BINARY_BASENAME)-$(GOOS)-$(GOARCH) bin/$(BINARY_BASENAME)
 
 run: build
 	bin/tracer
 
 build.image:
-	docker build \
-	-t $(DOCKER_REPO):$(TAG) \
-	-f Dockerfile \
-	.
-
-image.push: build.image
-	docker push \
-	$(DOCKER_REPO):$(TAG)
+	docker buildx create --use --name tracer-builder
+	docker buildx build --platform linux/amd64,linux/arm64 -t $(DOCKER_REPO):$(TAG) . --push
+	docker buildx rm tracer-builder
 
 clean:
 	rm -rf bin
